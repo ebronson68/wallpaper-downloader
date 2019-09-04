@@ -1,0 +1,8 @@
+#!/bin/bash
+echo -e "\n"
+echo -e "dabdabdab\t   dabdab   \tdabdabdab"
+echo -e "dab\tdab\tdab\t dab\tdab\tdab"
+echo -e "dab\tdab\tdabdabdabdab\tdabdabdab"
+echo -e "dab\tdab\tdab\t dab\tdab\tdab"
+echo -e "dabdabdab\tdab\t dab\tdabdabdab"
+echo -e "\n"
