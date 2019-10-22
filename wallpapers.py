@@ -17,6 +17,7 @@ from io import BytesIO
 from warnings import simplefilter
 import argparse
 from fractions import Fraction
+import imghdr
 
 now = time()
 simplefilter('error', Image.DecompressionBombWarning)
@@ -94,24 +95,27 @@ def fix_path(dir):
     return dir
 
 def get_filename(url):
-    file = search('^.*(?!com|it)\/(.+?)$', url)
+    file = search('.+\/(.+)$', url)
     if file:
         return file.group(1)
 
-def get_extension(url):
-    ext = search('(\.....?)$', url)
+def get_extension(file):
+    ext = search('(\.....?)$', file)
     if ext is not None:
         return ext.group(1)
 
 def get_image_size(url):
-    ext = get_extension(url)
     file = get_filename(url)
-    if ext is not None and file != "undefined.jpg":
+    ext = get_extension(file)
+    if ext is not None and file != "undefined.jpg" and imghdr.what(BytesIO(requests.get(url).content)) is not None:
         try:
             data = requests.get(url).content
             im = Image.open(BytesIO(data))
             width, height = im.size
         except Image.DecompressionBombWarning as e:
+            width, height = -1, -1
+        except Exception as e:
+            print("[ERROR]", url, " failed with ", e)
             width, height = -1, -1
     else:
         width, height = -1, -1
