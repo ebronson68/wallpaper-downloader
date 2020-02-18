@@ -17,7 +17,7 @@ from io import BytesIO
 from warnings import simplefilter
 import argparse
 from fractions import Fraction
-import imghdr
+import mimetypes
 
 now = time()
 simplefilter('error', Image.DecompressionBombWarning)
@@ -107,19 +107,22 @@ def get_extension(file):
 def get_image_size(url):
     file = get_filename(url)
     ext = get_extension(file)
-    if ext is not None and file != "undefined.jpg" and imghdr.what(BytesIO(requests.get(url).content)) is not None:
+    if ext is not None and file != "undefined.jpg" and is_url_image(url) is True:
         try:
             data = requests.get(url).content
             im = Image.open(BytesIO(data))
             width, height = im.size
         except Image.DecompressionBombWarning as e:
-            width, height = -1, -1
+            width, height = -2, -2
         except Exception as e:
-            print("[ERROR]", url, " failed with ", e)
-            width, height = -1, -1
+            width, height = -3, -3
     else:
         width, height = -1, -1
     return width, height
+
+def is_url_image(url):
+    mimetype,encoding = mimetypes.guess_type(url)
+    return (mimetype and mimetype.startswith('image'))
 
 def first_stage(url):
     name = get_filename(url)
@@ -138,6 +141,8 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
     fit_aspect_ratio_text = '[DOES FIT ASPECT RATIO] {0}\'s aspect ratio is {1}'.format(name,ratio)
     not_fit_aspect_ratio_text = '[DOES NOT FIT ASPECT RATIO] {0}\'s aspect ratio is {1}, needs to be {2}'.format(name,ratio,args.force_aspect_ratio)
     invalid_file_type_text = '[INVALID FILE TYPE] url: {0}'.format(url)
+    bad_file_text = '[BAD FILE] url: {0}'.format(url)
+    unknown_error_text = '[UNKNOWN ERROR] url: {0}, path {1}'.format(url,path)
 
     if not args.force_aspect_ratio and not args.force_width and not args.force_height:
         if args.max_width >= width >= args.min_width and args.max_height >= height >= args.min_height:
@@ -145,6 +150,10 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
         else:
             if width == -1 and height == -1 and args.verbose > 1:
                 print(invalid_file_type_text)
+            elif width == -2 and height == -2 and args.verbose > 1:
+                print(bad_file_text)
+            elif width == -3 and height == -3 and args.verbose > 1:
+                print(unknown_error_text)
             elif args.verbose > 1:
                 print(not_fit_resolution_text)
 
@@ -197,19 +206,19 @@ def third_stage(path,blacklist,name,url,width,height):
                 print(downloading_text)
                 if args.verbose > 2:
                     print("\n")
-            download(width,height,path,blacklist,name,url)
+            download(path,url)
         elif args.verbose > 2:
             print(blacklisted_file_text)
     elif args.verbose > 1:
         print(already_exists_text)
 
-def download(width,height,path,blacklist_path,filename,url):
-    invalid_url_text = '[INVALID URL] file path: {0}'.format(path)
+def download(path,url):
+    http_error_text = '[HTTP ERROR] file path: {0}'.format(url)
     try:
         urllib.request.urlretrieve(url, path)
-    except urllib.error.URLError as e:
-        if args.verbose > 1:
-            print(invalid_url_text)
+    except urllib.error.HTTPError as e:
+        if args.verbose > 0:
+            print(http_error_text)
 
 def check_aspect_ratio(ratio):
     ratio_nums = search('^(.*)\:+(.*)$', ratio)
