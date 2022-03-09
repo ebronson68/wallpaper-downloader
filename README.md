@@ -1,6 +1,8 @@
-# random
+# wallpapers.py
 
-requirement: have to create virtual environment if you're on one of the new Apple M1 MacBook Pros
+description: Download the top wallpapers for the day off of Reddit to a directory and delete files older than a day. 
+
+prerequisites: have to create virtual environment if you're on one of the new Apple M1 MacBook Pros
 
 running wallpapers.py:
 
