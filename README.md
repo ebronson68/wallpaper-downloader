@@ -1,18 +1,23 @@
 # wallpapers.py
+Download the top wallpapers for the day off of Reddit to a directory and delete files older than a day. 
 
-description: Download the top wallpapers for the day off of Reddit to a directory and delete files older than a day. 
-
-prerequisites: have to create virtual environment if you're on one of the new Apple M1 MacBook Pros
-
-running wallpapers.py:
-
+## Installation
+Create Virtual Environment ## for Apple Mac M1s
 ```
 mkdir ~venv/
 python3 -m venv ~/venv
+```
+Install prerequisites
+```
+python3 -m pip install Pillow requests praw imgurpython
+```
+
+## Usage
+activate virtual environment and run program
+```
 source ~/venv/bin/activate
-python3 -m pip install PIL
-python3 -m pip install requests
-python3 -m pip install praw
-python3 -m pip install imgurpython
 ./wallpapers.py
 ```
+
+## To-do
+- move client ids/secrets to vault
