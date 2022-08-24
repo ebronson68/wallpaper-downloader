@@ -1,4 +1,4 @@
-#!/Users/bbronson/venv/bin/python3
+#!./venv/bin/python3
 #
 # https://github.com/Imgur/imgurpython
 # https://praw.readthedocs.io/en/latest/code_overview/models/subreddit.html
@@ -23,9 +23,10 @@ now = time()
 simplefilter('error', Image.DecompressionBombWarning)
 
 home_dir = os.getenv('HOME') + "/"
-cycle_dir = home_dir + "Pictures/Backgrounds/"
-blacklist_dir = home_dir + "Pictures/Blacklisted Backgrounds/"
-album_dir = home_dir + "Pictures/Album Backgrounds/"
+backgrounds_dir = home_dir + "Pictures/Backgrounds/"
+cycle_dir = backgrounds_dir + "Downloaded Backgrounds/"
+blacklist_dir = backgrounds_dir + "Blacklisted Backgrounds/"
+album_dir = backgrounds_dir + "Album Backgrounds/"
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-v', '--verbose', action='count', help='increase the verbosity', default=0)
@@ -82,7 +83,7 @@ def main():
                 if not submission.over_18:
                     first_stage(submission.url)
         else:
-            for submission in subreddit.top('day'):
+            for submission in subreddit.top(time_filter="day"):
                 if not submission.over_18:
                     first_stage(submission.url)
         if not args.no_delete_old_files:
