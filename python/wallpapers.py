@@ -74,18 +74,18 @@ def main():
         for album in args.album:
             items = client.get_album_images(album)
             for picture in items:
-                first_stage(picture.link)
+                get_file_info(picture.link)
     else:
         reddit = praw.Reddit(client_id='P31W4FjRB6gJ0Q', client_secret='mulKi79w35XYQPMngRoQKn_L_yk', user_agent='Wallpapers by /u/454Casull')
         subreddit = reddit.subreddit(args.subreddit)
         if args.search_term:
             for submission in subreddit.search(args.search_term):
                 if not submission.over_18:
-                    first_stage(submission.url)
+                    get_file_info(submission.url)
         else:
             for submission in subreddit.top(time_filter="day"):
                 if not submission.over_18:
-                    first_stage(submission.url)
+                    get_file_info(submission.url)
         if not args.no_delete_old_files:
             delete_old_files(args.directory, 1)
             delete_old_files(args.blacklisted, 2)
@@ -125,16 +125,16 @@ def is_url_image(url):
     mimetype,encoding = mimetypes.guess_type(url)
     return (mimetype and mimetype.startswith('image'))
 
-def first_stage(url):
+def get_file_info(url):
     name = get_filename(url)
     width, height = get_image_size(url)
     path = args.directory + name
     blacklist = args.blacklisted + name
     ratio = width / height
 
-    second_stage(width, height, ratio, name, path, blacklist, url)
+    check_file_properties(width, height, ratio, name, path, blacklist, url)
 
-def second_stage(width, height, ratio, name, path, blacklist, url):
+def check_file_properties(width, height, ratio, name, path, blacklist, url):
     ratio = str(Fraction(ratio).limit_denominator()).replace("/",":")
 
     fit_resolution_text = '[DOES FIT RESOLUTION] {0}\'s resolution is {1} x {2}'.format(name,width,height)
@@ -147,7 +147,7 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
 
     if not args.force_aspect_ratio and not args.force_width and not args.force_height:
         if args.max_width >= width >= args.min_width and args.max_height >= height >= args.min_height:
-            third_stage(path,blacklist,name,url,width,height)
+            check_filesystem(path,blacklist,name,url,width,height)
         else:
             if width == -1 and height == -1 and args.verbose > 1:
                 print(invalid_file_type_text)
@@ -163,7 +163,7 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
         if args.force_aspect_ratio == ratio:
             if args.verbose > 2:
                 print(fit_aspect_ratio_text)
-            third_stage(path,blacklist,name,url,width,height)
+            check_filesystem(path,blacklist,name,url,width,height)
         else:
             if args.verbose > 1:
                 print(not_fit_aspect_ratio_text)
@@ -174,7 +174,7 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
         if args.force_width == width:
             if args.verbose > 2:
                 print(fit_resolution_text)
-            third_stage(path,blacklist,name,url,width,height)
+            check_filesystem(path,blacklist,name,url,width,height)
         else:
             if args.verbose >= 1:
                 print(not_fit_resolution_text)
@@ -185,12 +185,12 @@ def second_stage(width, height, ratio, name, path, blacklist, url):
         if args.force_height == height:
             if args.verbose > 2:
                 print(fit_resolution_text)
-            third_stage(path,blacklist,name,url,width,height)
+            check_filesystem(path,blacklist,name,url,width,height)
         else:
             if args.verbose >= 1:
                 print(not_fit_resolution_text)
 
-def third_stage(path,blacklist,name,url,width,height):
+def check_filesystem(path,blacklist,name,url,width,height):
     not_already_exists_text = '[DOES NOT EXIST] file path: {0}'.format(path)
     downloading_text = '[DOWNLOADING] url: {0}'.format(url)
     blacklisted_file_text = '[IN BLACKLIST] file: {0}'.format(name)
@@ -207,13 +207,13 @@ def third_stage(path,blacklist,name,url,width,height):
                 print(downloading_text)
                 if args.verbose > 2:
                     print("\n")
-            download(path,url)
+            http_download(path,url)
         elif args.verbose > 2:
             print(blacklisted_file_text)
     elif args.verbose > 1:
         print(already_exists_text)
 
-def download(path,url):
+def http_download(path,url):
     http_error_text = '[HTTP ERROR] file path: {0}'.format(url)
     try:
         urllib.request.urlretrieve(url, path)
