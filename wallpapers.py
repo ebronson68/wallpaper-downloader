@@ -60,7 +60,7 @@ def main():
             print(dir," is not a valid directory on the system")
             exit()
 
-    if args.search_term:
+    if args.search_term or args.album:
         dir = fix_path(args.directory)
         for f in os.listdir(dir):
             file = dir + f
