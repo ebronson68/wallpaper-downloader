@@ -24,14 +24,13 @@ simplefilter('error', Image.DecompressionBombWarning)
 
 home_dir = os.getenv('HOME') + "/"
 backgrounds_dir = home_dir + "Pictures/Backgrounds/"
-cycle_dir = backgrounds_dir + "Downloaded Backgrounds/"
+downloaded_dir = backgrounds_dir + "Downloaded Backgrounds/"
 blacklist_dir = backgrounds_dir + "Blacklisted Backgrounds/"
-album_dir = backgrounds_dir + "Album Backgrounds/"
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-v', '--verbose', action='count', help='increase the verbosity', default=0)
 parser.add_argument('-a', '--album', nargs="*", help='download pictures using a imgur album id')
-parser.add_argument('-d', '--directory', help='directory to save images to', default=cycle_dir)
+parser.add_argument('-d', '--directory', help='directory to save images to', default=downloaded_dir)
 parser.add_argument('-b', '--blacklisted', help='blacklist directory', default=blacklist_dir)
 parser.add_argument('--min-width', help='min width of screen', default=1920, dest="min_width", type=int)
 parser.add_argument('--min-height', help='min height of screen', default=1080, dest="min_height", type=int)
