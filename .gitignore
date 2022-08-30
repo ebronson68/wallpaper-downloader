@@ -2,3 +2,5 @@
 /.idea
 /venv
 /vars_file.py
+
+/__pycache__
