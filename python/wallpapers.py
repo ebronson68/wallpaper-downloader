@@ -60,6 +60,13 @@ def main():
             print(dir," is not a valid directory on the system")
             exit()
 
+    if args.search_term:
+        dir = fix_path(args.directory)
+        for f in os.listdir(dir):
+            file = dir + f
+            if not search('^\..+?$', f):
+                os.remove(file)
+
     if args.verbose >= 1 and args.force_aspect_ratio:
         print("Finding pictures with aspect ratio of", args.force_aspect_ratio)
     elif args.verbose >= 1 and not args.force_aspect_ratio and (not args.force_height or not args.force_width):
