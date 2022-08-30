@@ -18,6 +18,7 @@ from warnings import simplefilter
 import argparse
 from fractions import Fraction
 import mimetypes
+import vars_file
 
 now = time()
 simplefilter('error', Image.DecompressionBombWarning)
@@ -80,15 +81,18 @@ def main():
         print("Finding pictures with exact resolution of", args.min_width, "x", args.min_height)
 
     if args.album:
-        client_id= "6c478b24a403475"
-        client_secret = "ebdf34952fad765ee2e0946de30933e4936c1f0d"
+        client_id = vars_file.imgur_client_id 
+        client_secret = vars_file.imgur_client_secret
         client = ImgurClient(client_id, client_secret)
         for album in args.album:
             items = client.get_album_images(album)
             for picture in items:
                 get_file_info(picture.link)
     else:
-        reddit = praw.Reddit(client_id='P31W4FjRB6gJ0Q', client_secret='mulKi79w35XYQPMngRoQKn_L_yk', user_agent='Wallpapers by /u/454Casull')
+        client_id = vars_file.reddit_client_id 
+        client_secret = vars_file.reddit_client_secret
+        user_agent = vars_file.reddit_user_agent
+        reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
         subreddit = reddit.subreddit(args.subreddit)
         if args.search_term:
             for submission in subreddit.search(args.search_term):
