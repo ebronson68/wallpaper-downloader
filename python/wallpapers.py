@@ -66,6 +66,12 @@ def main():
             if not search('^\..+?$', f):
                 os.remove(file)
 
+    if args.force_height:
+        change_height()
+
+    if args.force_width:
+        change_width()
+
     if args.verbose >= 1 and args.force_aspect_ratio:
         print("Finding pictures with aspect ratio of", args.force_aspect_ratio)
     elif args.verbose >= 1 and not args.force_aspect_ratio and (not args.force_height or not args.force_width):
@@ -247,12 +253,6 @@ def change_width():
     args.width = args.force_width
     args.min_width = args.force_width
     args.max_width = args.force_width
-
-if args.force_height:
-    change_height()
-
-if args.force_width:
-    change_width()
 
 if __name__ == "__main__":
     main()
