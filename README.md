@@ -18,6 +18,3 @@ activate virtual environment and run program
 source ~/venv/bin/activate
 ./wallpapers.py
 ```
-
-## To-do
-- move client ids/secrets to vault
