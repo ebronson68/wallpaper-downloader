@@ -1,12 +1,8 @@
 #!./venv/bin/python3
 
 import os
-import getpass
-import re
 import requests
-import tqdm
 import time
-import urllib
 import json
 from re import search
 import argparse

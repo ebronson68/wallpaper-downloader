@@ -4,13 +4,11 @@
 # https://praw.readthedocs.io/en/latest/code_overview/models/subreddit.html
 
 import requests
-import json
 import praw
 from re import search
 import urllib.request
-import os, sys, time
+import os, time
 from time import time
-from subprocess import call
 from imgurpython import ImgurClient
 from PIL import Image
 from io import BytesIO
@@ -43,8 +41,6 @@ parser.add_argument('--force-width', help='only download files that match given 
 parser.add_argument('-s','--subreddit', help='the subreddit to download pictures from', dest="subreddit", default="wallpapers+wallpaper+MinimalWallpaper")
 parser.add_argument('--no-delete-old-files', help='do not delete files older than a day in the directory', dest="no_delete_old_files", action='store_true')
 parser.add_argument('--search-term', nargs="*", help='search for a specific thing', dest="search_term")
-
-
 
 args = parser.parse_args()
 
