@@ -22,6 +22,7 @@ parser.add_argument('--force-aspect-ratio', help='only download files that match
 parser.add_argument('--no-delete-old-files', help='do not delete files older than a day in the directory', dest="no_delete_old_files", action='store_true')
 parser.add_argument('--result-count', help='Count of wallpapers to download', default=24,dest="result_count", type=int)
 parser.add_argument('--page-count', help='Count of page results to download', default=2,dest="page_count", type=int)
+parser.add_argument('--deletion-time', help='time in seconds that files will be deleted after', default=604800, dest="deletion_time", type=int)
 
 args = parser.parse_args()
 
@@ -66,7 +67,7 @@ def fix_path(dir):
 def delete_old_files(dir, keeptime):
     for f in os.listdir(dir):
         file = dir + f
-        if os.stat(os.path.join(dir,f)).st_mtime < now - keeptime * 86400 and not search('^\..+?$', f):
+        if os.stat(os.path.join(dir,f)).st_mtime < now - keeptime * args.deletion_time and not search('^\..+?$', f):
             os.remove(file)
 
 def main():

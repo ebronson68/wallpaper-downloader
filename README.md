@@ -31,6 +31,7 @@ Download the top wallpapers for the week off of Wallhaven.cc to a directory and 
 | `--no-delete-old-files` | do not delete files older than a day in the directory | | N/A |
 | `--result-count` | Count of wallpapers to download | | `24` |
 | `--page-count` | Count of page results to download | | `2` |
+| `--deletion-time` | time in seconds that files will be deleted after | | `604800` |
 
 ## Reddit Wallpaper Downloader
 
@@ -66,3 +67,4 @@ python3 -m pip install Pillow requests praw imgurpython
 | `-s --subreddit` | the subreddit to download pictures from | | `wallpapers+wallpaper+MinimalWallpaper` |
 | `--no-delete-old-files` | do not delete files older than a day in the directory | | N/A |
 | `--search-term` | search wallpapers for a specific term | | N/A |
+| `--deletion-time` | time in seconds that files will be deleted after | | `86400` |
