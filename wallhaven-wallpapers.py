@@ -21,8 +21,9 @@ parser.add_argument('--min-height', help='min height of screen', default=1080, d
 parser.add_argument('--force-aspect-ratio', help='only download files that match given aspect ratio', default='16x9', dest="force_aspect_ratio", choices=['25x16','3x2','5x4', '4x3', '16x10', '9x16', '16x9'])
 parser.add_argument('--no-delete-old-files', help='do not delete files older than a day in the directory', dest="no_delete_old_files", action='store_true')
 parser.add_argument('--result-count', help='Count of wallpapers to download', default=24,dest="result_count", type=int)
-parser.add_argument('--page-count', help='Count of page results to download', default=2,dest="page_count", type=int)
-parser.add_argument('--deletion-time', help='time in seconds that files will be deleted after', default=604800, dest="deletion_time", type=int)
+parser.add_argument('--page-count', help='Count of page results to download', default=1,dest="page_count", type=int)
+parser.add_argument('--deletion-time', help='time in seconds that files will be deleted after', default=259200, dest="deletion_time", type=int)
+parser.add_argument('--search', help='search term to use', default=None)
 
 args = parser.parse_args()
 
@@ -30,7 +31,10 @@ BASEURL = ""
 cookies = dict()
 topListRange = '1w'
 
-BASEURL = 'https://wallhaven.cc/api/v1/search?topRange=' + topListRange + '&sorting=toplist&purity=100&ratios=' + str(args.force_aspect_ratio) + '&atleast=' + str(args.min_width) + 'x' + str(args.min_height) + '&page='
+if args.search is None:
+    BASEURL = 'https://wallhaven.cc/api/v1/search?' + 'topRange=' + topListRange + '&sorting=toplist&purity=100&ratios=' + str(args.force_aspect_ratio) + '&atleast=' + str(args.min_width) + 'x' + str(args.min_height) + '&page='
+else:
+    BASEURL = 'https://wallhaven.cc/api/v1/search?' + 'q=' + str(args.search) + '&purity=100&ratios=' + str(args.force_aspect_ratio) + '&atleast=' + str(args.min_width) + 'x' + str(args.min_height) + '&page='
 
 def downloadPage(pageId, totalImage):
     url = BASEURL + str(pageId)
@@ -38,13 +42,16 @@ def downloadPage(pageId, totalImage):
     pagesImages = json.loads(urlreq.content);
     pageData = pagesImages["data"]
 
+    # output length of page data
+    if (args.verbose >= 1):
+        print("Page %s has %s images" % (pageId, len(pageData)))
     for i in range(len(pageData)):
-        currentImage = (((pageId - 1) * 24) + (i + 1))
+        currentImage = (((pageId - 1) * args.result_count) + (i + 1))
 
         url = pageData[i]["path"]
 
         filename = os.path.basename(url)
-        osPath = os.path.join(downloaded_dir, filename)
+        osPath = os.path.join(args.directory, filename)
         if not os.path.exists(osPath):
             imgreq = requests.get(url, cookies=cookies)
             if imgreq.status_code == 200:
