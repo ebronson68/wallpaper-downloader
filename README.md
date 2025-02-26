@@ -32,6 +32,7 @@ Download the top wallpapers for the week off of Wallhaven.cc to a directory and 
 | `--result-count` | Count of wallpapers to download | | `24` |
 | `--page-count` | Count of page results to download | | `2` |
 | `--deletion-time` | time in seconds that files will be deleted after | | `604800` |
+| `-p --purge` | purge files in folder before downloading new images | | `false` |
 
 ## Reddit Wallpaper Downloader
 

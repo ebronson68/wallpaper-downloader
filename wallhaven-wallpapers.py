@@ -18,12 +18,13 @@ parser.add_argument('-v', '--verbose', action='count', help='increase the verbos
 parser.add_argument('-d', '--directory', help='directory to save images to', default=downloaded_dir)
 parser.add_argument('--min-width', help='min width of screen', default=1920, dest="min_width", type=int)
 parser.add_argument('--min-height', help='min height of screen', default=1080, dest="min_height", type=int)
-parser.add_argument('--force-aspect-ratio', help='only download files that match given aspect ratio', default='16x9', dest="force_aspect_ratio", choices=['25x16','3x2','5x4', '4x3', '16x10', '9x16', '16x9'])
+parser.add_argument('--force-aspect-ratio', help='only download files that match given aspect ratio', default='16x9', dest="force_aspect_ratio", choices=['25x16','3x2','5x4', '4x3', '16x10', '9x16', '16x9', 'portrait', 'landscape'])
 parser.add_argument('--no-delete-old-files', help='do not delete files older than a day in the directory', dest="no_delete_old_files", action='store_true')
 parser.add_argument('--result-count', help='Count of wallpapers to download', default=24,dest="result_count", type=int)
 parser.add_argument('--page-count', help='Count of page results to download', default=1,dest="page_count", type=int)
 parser.add_argument('--deletion-time', help='time in seconds that files will be deleted after', default=259200, dest="deletion_time", type=int)
-parser.add_argument('--search', help='search term to use', default=None)
+parser.add_argument('-s', '--search', help='search term to use', default=None)
+parser.add_argument('-p', '--purge', help='purge old files', action='store_true')
 
 args = parser.parse_args()
 
@@ -75,6 +76,8 @@ def delete_old_files(dir, keeptime):
     for f in os.listdir(dir):
         file = dir + f
         if os.stat(os.path.join(dir,f)).st_mtime < now - keeptime * args.deletion_time and not search('^\..+?$', f):
+            os.remove(file)
+        if args.purge:
             os.remove(file)
 
 def main():
